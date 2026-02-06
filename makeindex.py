@@ -27,15 +27,37 @@ for topic in sorted(BASE.iterdir()):
 
     rows = []
 
-    for file in sorted(topic.glob("*.zip")):
+    for data_dir in sorted(topic.iterdir()):
+        if not data_dir.is_dir():
+            continue
+
+        name = data_dir.name
+
+        # #d 태그 확인
+        enabled = True
+        if name.endswith("#d"):
+            enabled = False
+            name = name[:-2]
+
+        # 내부 zip 찾기
+        zips = list(data_dir.glob("*.zip"))
+        if not zips:
+            continue
+
+        file = zips[0]
+
         date = last_modified(file)
         size = file_size(file.stat().st_size)
 
+        display = name
+        if not enabled:
+            display = f"<del>{name}</del>"
+
         rows.append(f"""
         <tr>
-            <td><a href="{file}">{file.name}</a></td>
-            <td>{size}</td>
+            <td><a href="{file}">{display}</a></td>
             <td>{date}</td>
+            <td>{size}</td>
         </tr>
         """)
 
@@ -46,9 +68,9 @@ for topic in sorted(BASE.iterdir()):
     <h2>{topic.name}</h2>
     <table>
         <tr>
-            <th>파일</th>
-            <th>크기</th>
+            <th>설명</th>
             <th>수정일</th>
+            <th>크기</th>
         </tr>
         {''.join(rows)}
     </table>
@@ -77,11 +99,14 @@ table {{
 td, th {{
     padding: 6px 10px;
     border-bottom: 1px solid #ddd;
-    text-align: left;
 }}
 
 th {{
-    background: #f5f5f5;
+    background: #f3f3f3;
+}}
+
+del {{
+    color: #888;
 }}
 </style>
 </head>
