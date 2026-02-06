@@ -69,7 +69,7 @@ for topic in sorted(BASE.iterdir()):
     <h2>{topic.name}</h2>
     <table>
         <tr>
-            <th>설명</th>
+            <th>이름</th>
             <th>수정일</th>
             <th>크기</th>
         </tr>
